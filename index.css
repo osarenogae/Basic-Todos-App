@@ -1,0 +1,157 @@
+*{
+    padding: 0;
+    font-family: 'Poppins', 'sans-serif';
+    box-sizing: border-box;
+}
+
+body
+{
+    background-color: darkkhaki;
+}
+
+.app 
+{
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 5rem;
+    color: black;
+   
+}
+
+.app-header
+{ 
+    margin: 1rem;
+    padding: 1rem;
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: darkkhaki;
+    background-color: black;
+    border-radius: 5rem;
+}
+
+.app-body
+{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    margin: 2rem;
+}
+
+.todos
+{
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.cta
+{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.todo 
+{
+    margin: 0.6rem;
+    padding: 1rem;
+    border: 1px solid darkkhaki;
+    border-radius: 1rem;
+}
+
+.todo-btn
+{
+    margin: 0.6rem;
+    padding: 0.6rem;
+    border-radius: 1rem;
+    background-color: #50C878;
+    cursor: pointer;
+}
+
+.todo-remove-btn 
+{
+    padding: 0.6rem;
+    border-radius: 1rem;
+    background-color: darkred;
+    color: white;
+    cursor: pointer;
+}
+
+.goals
+{
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.goal 
+{
+    margin: 0.6rem;
+    padding: 1rem;
+    border: 1px solid darkkhaki;
+    border-radius: 1rem;
+}
+
+.goal-btn
+{
+    margin: 0.6rem;
+    padding: 0.6rem;
+    border-radius: 1rem;
+    background-color:#50C878;
+    cursor: pointer;
+}
+
+.goal-remove-btn 
+{
+    margin-left: 2rem;
+    padding: 0.6rem;
+    border-radius: 1rem;
+    background-color: darkred;
+    color: white;
+    cursor: pointer;
+}
+
+.list 
+{
+    display: flex;
+    flex-direction: column;
+}
+
+.list > h3
+{
+  font-weight: 700;
+}
+
+.todo-list
+{
+ text-align: center;
+}
+
+ul
+{
+  list-style-type: none;
+}
+
+li
+{
+    margin-right: 1rem;
+}
+
+li::before
+{
+  content: '🎯 ';
+}
+
+
+.goal-list
+{
+}
+
+.goal-list :hover
+{
+    cursor: pointer;
+}

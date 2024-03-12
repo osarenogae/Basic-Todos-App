@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Todos App</title>
+        <link rel="stylesheet" href="index.css" />
+    </head>
+
+    <body>
+        
+        <div class="app">
+            <div class="app-header">
+                <h1>Todos and Goals</h1>
+            </div>
+            <div class="app-body">
+                <div class="todos">
+                    <h1>Todos</h1>
+                    <div class="cta">
+                        <input 
+                        type="text"
+                        id="todo"
+                        class="todo"
+                        placeholder="Enter Todo Item"
+                        />
+                        <button id="todo-btn" class="todo-btn">Add Todo</button>
+                    </div>
+                    <div class="list">
+                        <h3>My Todos</h3>
+                        <ul id="todo-list" class="todo-list"><ul>
+                    </div> 
+                </div>
+
+                <div class="goals">
+                    <h1>Goals</h1>
+                    <div class="cta">
+                        <input 
+                            type="text"
+                            id="goal"
+                            class="goal"
+                            placeholder="Enter Goal"
+                        />
+                        <button id="goal-btn" class="goal-btn">Add Goal</button>
+                    </div>
+                    <div class="list">
+                        <h3>My Goals</h3>
+                        <ul id="goal-list" class="goal-list"><ul>
+                    </div>      
+
+                </div>
+            </div>
+        </div>
+    </body>
+
+
+    <script type = "text/javascript">
+
+    //library code:
+    function createStore(reducer) {
+
+    let state;
+    let listeners = [];
+    const getState = () => state;
+    const subscribe = (
+        (listener) => {
+            listeners.push(listener); 
+            return() => {
+                listeners = listeners.filter((l) => l != listener);
+            }
+            }
+     );
+
+        const dispatch = (action) => {
+            state =  reducer(state, action);
+            listeners.forEach((listener) => listener())
+        }
+
+        return {
+            getState,
+            subscribe,
+            dispatch
+        }
+    }
+
+    //App code
+    const ADD_TODO = "ADD_TODO";
+    const REMOVE_TODO = "REMOVE_TODO";
+    const TOGGLE_TODO = "TOGGLE_TODO";
+
+    const ADD_GOAL = "ADD_GOAL";
+    const REMOVE_GOAL = "REMOVE_GOAL";
+
+    function todos(state=[], action)
+    {
+        switch(action.type)
+        {
+            case  ADD_TODO:
+            return state.concat([action.todo]);
+            
+            case REMOVE_TODO:
+            return state.filter((todo) => todo.id != action.id);   
+
+
+            case TOGGLE_TODO:
+            return state.map((todo) => todo.id !== action.id ? todo : Object.assign({}, todo, {complete: !todo.complete}));
+
+            default:
+            return state;
+            
+        }
+    }
+
+    function goals(state=[], action)
+    {
+        switch(action.type)
+        {
+            case ADD_GOAL:
+            return state.concat([action.goal]);
+
+            case REMOVE_GOAL:
+            return state.filter((goal) => goal.id != action.id);
+
+            default:
+            return state;     
+        }
+    }
+
+    function app(state={}, action)
+    {
+        return {
+            todos: todos(state.todos, action),
+            goals: goals(state.goals, action),
+        }
+    }
+
+    /*  Action Creators  */
+    function addTodoAction(todo)
+    {
+        return{type: ADD_TODO, todo};
+    }
+
+    function removeTodoAction(id)
+    {
+        return{type: REMOVE_TODO, id};
+    }
+
+    function toggleTodoAction(id)
+    {
+        return{type: TOGGLE_TODO, id};
+    }
+
+    function addGoalAction(goal)
+    {
+        return{type: ADD_GOAL, goal};
+    }
+
+    function removeGoalAction(id)
+    {
+        return{type: REMOVE_GOAL, id};
+        
+    }
+
+    const store = createStore(app);
+
+    store.subscribe(() => {
+       const  { todos, goals } = store.getState();
+       document.getElementById('todo-list').innerHTML = '';
+       todos.forEach(displayTodo);
+    
+       document.getElementById('goal-list').innerHTML = '';
+       goals.forEach(displayGoal);
+    }); 
+
+
+    // Function to generate a random id
+    const generateRandomId = () => {
+    return Math.random().toString(36).substr(2, 9);
+    }; 
+    
+    //Register Event Listeners
+    const todoButton = document.getElementById("todo-btn");
+    todoButton.addEventListener('click', addTodo);
+
+    const goalButton = document.getElementById("goal-btn");
+    goalButton.addEventListener("click", addGoal);
+
+ 
+    function addTodo() // retrieve the value entered by the user and store in state tree
+    {
+        let name = document.getElementById("todo").value;
+        document.getElementById("todo").value = '';
+        if(name == '')
+        {
+            alert("Please enter a valid Todo");
+        }
+        else
+        {
+        store.dispatch(addTodoAction({id: generateRandomId(), name, complete: false}));
+        }
+        
+    } 
+
+    function addGoal() 
+    {
+        let name = document.getElementById("goal").value;
+        document.getElementById("goal").value = '';
+        if(name == '')
+        {
+            alert("Please enter a valid Goal");
+        }
+        else
+        {
+        store.dispatch(addGoalAction({id: generateRandomId(), name, complete: false}));
+        }
+        
+    }
+
+
+    function createRemoveButton(onClick)
+    {
+        const rmvBtn = document.createElement('button');
+        rmvBtn.setAttribute('class', 'goal-remove-btn');
+        rmvBtn.innerHTML = 'Remove';
+        rmvBtn.addEventListener('click', onClick);
+        return rmvBtn;
+    }
+
+    function displayTodo(todo) // take the todo items from the store and display it in a list
+    {            
+        const todoList = document.getElementById("todo-list");
+        const listItem = document.createElement('li');
+        const node = document.createTextNode(todo.name);
+        listItem.appendChild(node);
+        listItem.style.textDecoration = todo.complete ? "line-through" : "none";
+        listItem.style.cursor = 'pointer';
+        listItem.addEventListener('click', () => {
+            store.dispatch(toggleTodoAction(todo.id));
+        })
+        
+        todoList.appendChild(listItem);
+
+        const removeButton = createRemoveButton(() => {
+            store.dispatch(removeTodoAction(todo.id));
+        })
+
+        listItem.appendChild(removeButton);
+ 
+    }
+
+    function displayGoal(goal) 
+    {
+        const goalList = document.getElementById("goal-list");
+        const listItem = document.createElement('li');
+        const node = document.createTextNode(goal.name);
+        listItem.appendChild(node);
+        goalList.appendChild(listItem);
+
+        const removeButton = createRemoveButton(() => {
+            store.dispatch(removeGoalAction(goal.id));
+        })
+
+        listItem.appendChild(removeButton);
+    }    
+
+
+    </script>
+
+</html>
